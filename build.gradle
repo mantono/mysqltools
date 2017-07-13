@@ -1,6 +1,6 @@
 group 'com.mantono'
-version '1.0-SNAPSHOT'
-description 'Connect easier to a MySQL database on the JVM'
+version '0.1'
+description 'Connect easier to a MySQL database on the JVM with Hikari'
 
 buildscript {
     ext.kotlin_version = '1.1.3'
