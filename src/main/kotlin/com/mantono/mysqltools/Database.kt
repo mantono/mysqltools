@@ -2,10 +2,7 @@ package com.mantono.mysqltools
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.experimental.future.future
 import java.sql.Connection
-import java.sql.PreparedStatement
-import java.util.concurrent.Future
 
 object Database
 {
@@ -23,9 +20,16 @@ object Database
 	}
 
 	fun connection(): Connection = dataSource.connection
+}
 
-	fun prepare(query: String): Future<PreparedStatement>
-	{
-		return future<PreparedStatement> { connection().prepareStatement(query) }
-	}
+inline fun <T> query(sqlFunc: Connection.() -> T): T
+{
+	val connection = Database.connection()
+	connection.use{ return sqlFunc(connection) }
+}
+
+inline suspend fun <T> queryAsync(sqlFunc: Connection.() -> T): T
+{
+	val connection = Database.connection()
+	connection.use{ return sqlFunc(connection) }
 }
