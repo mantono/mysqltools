@@ -27,9 +27,3 @@ inline fun <T> query(sqlFunc: Connection.() -> T): T
 	val connection = Database.connection()
 	connection.use{ return sqlFunc(connection) }
 }
-
-inline suspend fun <T> queryAsync(sqlFunc: Connection.() -> T): T
-{
-	val connection = Database.connection()
-	connection.use{ return sqlFunc(connection) }
-}
