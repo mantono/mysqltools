@@ -3,7 +3,7 @@ version '0.1.1'
 description 'Connect easier to a MySQL database on the JVM with Hikari'
 
 buildscript {
-    ext.kotlin_version = '1.1.3'
+    ext.kotlin_version = '1.1.51'
     ext.jvm_version = '1.8'
     ext.junit_platform_version = '1.0.0-M4'
 
