@@ -1,5 +1,5 @@
 group 'com.mantono'
-version '0.1.1'
+version '0.1.2'
 description 'Connect easier to a MySQL database on the JVM with Hikari'
 
 buildscript {
