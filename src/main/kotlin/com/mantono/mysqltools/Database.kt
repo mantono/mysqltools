@@ -2,37 +2,30 @@ package com.mantono.mysqltools
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import java.io.Closeable
 import java.sql.Connection
+import java.util.*
+import javax.sql.DataSource
 
-object Database {
-	private val dataSource: HikariDataSource
-
-	init {
-		val config = HikariConfig("database.properties")
-		if(config.jdbcUrl.isNullOrEmpty())
-			config.jdbcUrl = System.getenv("JDBC_URL") ?: throw IllegalArgumentException("No valid JDBC URL found")
-		config.validate()
-		dataSource = HikariDataSource(config)
+interface DatabaseSource: DataSource, Closeable {
+	fun <T> query(sqlFunc: Connection.() -> T): T {
+		return connection.use(sqlFunc)
 	}
 
-	fun connection(): Connection = dataSource.connection
-}
-
-inline fun <T> query(
-		connection: Connection = Database.connection(),
-		sqlFunc: Connection.() -> T
-): T {
-	connection.use { return sqlFunc(connection) }
-}
-
-inline fun <T> atomicQuery(
-		connection: Connection = Database.connection(),
-		transactionLevel: Int = Connection.TRANSACTION_REPEATABLE_READ,
-		sqlFunc: Connection.() -> T
-): T {
-	connection.autoCommit = false
-	connection.transactionIsolation = transactionLevel
-	return query(connection) { sqlFunc(connection) }.also {
-		connection.commit()
+	fun <T> atomicQuery(
+			transactionLevel: Int = Connection.TRANSACTION_REPEATABLE_READ,
+			sqlFunc: Connection.() -> T
+	): T {
+		connection.autoCommit = false
+		connection.transactionIsolation = transactionLevel
+		return connection.use(sqlFunc).also {
+			connection.commit()
+		}
 	}
 }
+
+class HikkariDatabase(dataSource: HikariDataSource): DatabaseSource, DataSource by dataSource, Closeable by dataSource {
+	constructor(properties: Properties): this(HikariDataSource(HikariConfig(properties)))
+	constructor(config: HikariConfig = HikariConfig("database.properties")): this(HikariDataSource(config))
+}
+
