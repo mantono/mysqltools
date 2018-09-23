@@ -34,7 +34,7 @@ dependencies {
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-jdk8', version: '0.26.1'
     implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.26.1'
     implementation 'com.zaxxer:HikariCP:3.2.0'
-    runtime 'mysql:mysql-connector-java:5.1.42'
+    runtime 'mysql:mysql-connector-java:8.0.12'
 }
 
 compileKotlin {
